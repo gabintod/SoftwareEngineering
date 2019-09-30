@@ -18,6 +18,23 @@ public class BinaryTree<T>
         this.rightChild = rightChild;
     }
 
+    public BinaryTree<T> lowestCommonAncestor(BinaryTree<T> n1, BinaryTree<T> n2)
+    {
+        if ((n1 == null) || (n2 == null))
+            return null;
+
+        if ((this.equals(n1) || this.equals(n2)))
+            return this;
+
+        BinaryTree<T> leftLCA = (this.leftChild != null) ? this.leftChild.lowestCommonAncestor(n1, n2) : null;
+        BinaryTree<T> rightLCA = (this.rightChild != null) ? this.rightChild.lowestCommonAncestor(n1, n2) : null;
+
+        if ((leftLCA != null) && (rightLCA != null))
+            return this;
+
+        return (leftLCA != null) ? leftLCA : rightLCA;
+    }
+
     public int getHeight()
     {
         if ((leftChild == null) && (rightChild == null))
@@ -29,10 +46,7 @@ public class BinaryTree<T>
         if (rightChild == null)
             return leftChild.getHeight()+1;
 
-        int left = leftChild.getHeight();
-        int right = rightChild.getHeight();
-
-        return (left > right) ? left+1 : right+1;
+        return Math.max(leftChild.getHeight()+1, rightChild.getHeight()+1);
     }
 
     public int getNodeCount()

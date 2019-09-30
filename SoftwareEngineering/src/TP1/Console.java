@@ -7,7 +7,7 @@ import java.util.Scanner;
 
 import static com.sun.javafx.util.Utils.split;
 
-public class Console
+public class Console extends Command
 {
     public static final String UNKNOWN_COMMAND = "Unknown command";
 
@@ -21,6 +21,12 @@ public class Console
 
     public Console(String prompt)
     {
+        this("console", "interprete commands", prompt);
+    }
+
+    public Console(String name, String description, String prompt)
+    {
+        super(name, description);
         this.scanner = new Scanner(System.in);
         this.PROMPT = prompt;
         this.commands = new HashMap<>();
@@ -66,6 +72,12 @@ public class Console
                 return 0;
             }
         }); // Exit command
+    }
+
+    public int run(String[] args)
+    {
+        this.run();
+        return 0;
     }
 
     public void run()
