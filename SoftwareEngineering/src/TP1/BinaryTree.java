@@ -1,171 +1,44 @@
 package TP1;
 
-public class BinaryTree<T>
+public class BinaryTree<T> extends BinaryNode
 {
-    private T value;
-    private BinaryTree<T> leftChild;
-    private BinaryTree<T> rightChild;
-
-    public BinaryTree(T value)
+    public BinaryTree(Object value)
     {
-        this.value = value;
+        super(value);
     }
 
-    public BinaryTree(T value, BinaryTree<T> leftChild, BinaryTree<T> rightChild)
+    public BinaryTree(Object value, BinaryNode leftChild, BinaryNode rightChild)
     {
-        this(value);
-        this.leftChild = leftChild;
-        this.rightChild = rightChild;
+        super(value, leftChild, rightChild);
     }
 
-    public BinaryTree<T> lowestCommonAncestor(BinaryTree<T> n1, BinaryTree<T> n2)
+    public void putNode(BinaryNode<T> parent, BinaryNode<T> child, boolean rightChild)
     {
-        if ((n1 == null) || (n2 == null))
-            return null;
+        if (find(parent.getValue()) == null)
+            return;
 
-        if ((this.equals(n1) || this.equals(n2)))
-            return this;
+        if (find(child.getValue()) != null)
+            return;
 
-        BinaryTree<T> leftLCA = (this.leftChild != null) ? this.leftChild.lowestCommonAncestor(n1, n2) : null;
-        BinaryTree<T> rightLCA = (this.rightChild != null) ? this.rightChild.lowestCommonAncestor(n1, n2) : null;
-
-        if ((leftLCA != null) && (rightLCA != null))
-            return this;
-
-        return (leftLCA != null) ? leftLCA : rightLCA;
+        if (rightChild)
+            parent.setRightChild(child);
+        else
+            parent.setLeftChild(child);
     }
 
-    public int getHeight()
+    public void setValue(BinaryNode<T> node, T v)
     {
-        if ((leftChild == null) && (rightChild == null))
-            return 1;
+        if (find(node.getValue()) == null)
+            return;
 
-        if (leftChild == null)
-            return rightChild.getHeight()+1;
+        if (find(v) != null)
+            return;
 
-        if (rightChild == null)
-            return leftChild.getHeight()+1;
-
-        return Math.max(leftChild.getHeight()+1, rightChild.getHeight()+1);
+        node.setValue(v);
     }
 
-    public int getNodeCount()
+    public void print()
     {
-        if ((leftChild == null) && (rightChild == null))
-            return 1;
-
-        if (leftChild == null)
-            return rightChild.getNodeCount()+1;
-
-        if (rightChild == null)
-            return leftChild.getNodeCount()+1;
-
-        return leftChild.getNodeCount() + rightChild.getNodeCount() + 1;
-    }
-
-    public BinaryTree<T> find(T value)
-    {
-        if (this.value.equals(value))
-            return this;
-
-        if ((leftChild == null) && (rightChild == null))
-            return null;
-
-        if (leftChild == null)
-            return rightChild.find(value);
-
-        if (rightChild == null)
-            return leftChild.find(value);
-
-        BinaryTree<T> left = leftChild.find(value);
-
-        return (left == null) ? rightChild.find(value) : left;
-    }
-
-    public boolean remove(T value)
-    {
-        if ((leftChild != null) && (leftChild.getValue().equals(value)))
-        {
-            leftChild = null;
-            return true;
-        }
-
-        if ((rightChild != null) && (rightChild.getValue().equals(value)))
-        {
-            rightChild = null;
-            return true;
-        }
-
-        if ((leftChild != null) && (rightChild != null))
-        {
-            boolean left = leftChild.remove(value);
-
-            if (left)
-                return true;
-
-            return rightChild.remove(value);
-        }
-
-        if (leftChild != null)
-            return leftChild.remove(value);
-
-        if (rightChild != null)
-            return rightChild.remove(value);
-
-        return false;
-    }
-
-    public void print(String prefix, String childrenPrefix)
-    {
-        System.out.println(prefix + value);
-        if ((leftChild != null) && (rightChild != null))
-        {
-            rightChild.print(childrenPrefix + "├── ", childrenPrefix + "│   ");
-            leftChild.print(childrenPrefix + "└── ", childrenPrefix + "    ");
-        }
-        else if (leftChild != null)
-            leftChild.print(childrenPrefix + "└── ", childrenPrefix + "    ");
-        else if (rightChild != null)
-            rightChild.print(childrenPrefix + "└── ", childrenPrefix + "    ");
-    }
-
-    public T getValue()
-    {
-        return value;
-    }
-
-    public void setValue(T value)
-    {
-        this.value = value;
-    }
-
-    public BinaryTree<T> getLeftChild()
-    {
-        return leftChild;
-    }
-
-    public void setLeftChild(BinaryTree<T> leftChild)
-    {
-        this.leftChild = leftChild;
-    }
-
-    public BinaryTree<T> getRightChild()
-    {
-        return rightChild;
-    }
-
-    public void setRightChild(BinaryTree<T> rightChild)
-    {
-        this.rightChild = rightChild;
-    }
-
-    @Override
-    public String toString()
-    {
-        return "BinaryTree{" +
-                "value=" + value +
-                ", leftChild=" + leftChild +
-                ", rightChild=" + rightChild +
-                '}';
+        this.print("", "");
     }
 }

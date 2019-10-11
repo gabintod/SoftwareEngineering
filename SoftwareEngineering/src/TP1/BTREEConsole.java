@@ -55,7 +55,7 @@ public class BTREEConsole extends Console
                     return 2;
                 }
 
-                BinaryTree<String> node = btree.find(args[1]);
+                BinaryNode<String> node = btree.find(args[1]);
 
                 if (node == null)
                 {
@@ -63,7 +63,7 @@ public class BTREEConsole extends Console
                     return 2;
                 }
 
-                node.setValue(args[2]);
+                btree.setValue(node, args[2]);
                 System.out.println("node value change");
                 return 0;
             }
@@ -91,7 +91,7 @@ public class BTREEConsole extends Console
                     return 2;
                 }
 
-                BinaryTree<String> node = btree.find(args[1]);
+                BinaryNode<String> node = btree.find(args[1]);
 
                 if (node == null)
                 {
@@ -102,12 +102,12 @@ public class BTREEConsole extends Console
                 switch (args[3])
                 {
                     case "left":
-                        node.setLeftChild(new BinaryTree<String>(args[2]));
+                        btree.putNode(node, new BinaryNode<String>(args[2]), false);
                         System.out.println("left child set");
                         return 0;
 
                     case "right":
-                        node.setRightChild(new BinaryTree<String>(args[2]));
+                        btree.putNode(node, new BinaryNode<String>(args[2]), true);
                         System.out.println("right child set");
                         return 0;
 
@@ -182,7 +182,7 @@ public class BTREEConsole extends Console
                     return 2;
                 }
 
-                BinaryTree<String> node = btree.find(args[1]);
+                BinaryNode<String> node = btree.find(args[1]);
 
                 if (node == null)
                 {
@@ -288,14 +288,14 @@ public class BTREEConsole extends Console
                     return 2;
                 }
 
-                BinaryTree<String> n1 = btree.find(args[1]);
+                BinaryNode<String> n1 = btree.find(args[1]);
                 if (n1 == null)
                 {
                     Console.displayError("Node \"" + args[1] + "\"not found");
                     return 2;
                 }
 
-                BinaryTree<String> n2 = btree.find(args[2]);
+                BinaryNode<String> n2 = btree.find(args[2]);
                 if (n2 == null)
                 {
                     Console.displayError("Node \"" + args[2] + "\" not found");

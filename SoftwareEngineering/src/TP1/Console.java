@@ -91,6 +91,9 @@ public class Console extends Command
             this.entry = scanner.nextLine();
             this.entryArgs = split(entry, " ");
 
+            if (entryArgs.length < 1)
+                continue;
+
             command = this.commands.get(entryArgs[0]);
             if (command == null)
                 displayError(UNKNOWN_COMMAND);
