@@ -32,8 +32,25 @@ public class BinaryTreeTest
     }
 
     @Test
-    void testing()
+    void basics()
     {
-        
+        // well formed btree
+        assertEquals(nodes[0].getLeftChild(), nodes[1]);
+        assertEquals(nodes[0].getRightChild(), nodes[2]);
+
+        // no recursion possible
+        btree.putNode(nodes[3], nodes[1], true);
+        assertEquals(nodes[3].getRightChild(), nodes[8]);
+    }
+
+    @Test
+    void LCA()
+    {
+        assertEquals(btree.lowestCommonAncestor(nodes[1], nodes[2]), nodes[0]);
+        assertEquals(btree.lowestCommonAncestor(nodes[3], nodes[2]), nodes[0]);
+        assertEquals(btree.lowestCommonAncestor(nodes[7], nodes[3]), nodes[3]);
+        assertEquals(btree.lowestCommonAncestor(nodes[9], nodes[9]), nodes[9]);
+        assertEquals(btree.lowestCommonAncestor(nodes[7], nodes[10]), nodes[1]);
+        assertEquals(btree.lowestCommonAncestor(btree.lowestCommonAncestor(nodes[7], nodes[10]), nodes[12]), nodes[0]);
     }
 }
