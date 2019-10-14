@@ -39,7 +39,11 @@ public class BinaryTreeTest
         assertEquals(nodes[0].getRightChild(), nodes[2]);
 
         // no recursion possible
-        btree.putNode(nodes[3], nodes[1], true);
+        btree.putNode(nodes[3], nodes[0], true);
+        assertEquals(nodes[3].getRightChild(), nodes[8]);
+
+        // no add of pre-existing value
+        btree.putNode(nodes[3], nodes[10], true);
         assertEquals(nodes[3].getRightChild(), nodes[8]);
     }
 
