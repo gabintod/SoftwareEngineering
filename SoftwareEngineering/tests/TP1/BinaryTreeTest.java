@@ -32,11 +32,23 @@ public class BinaryTreeTest
     }
 
     @Test
-    void structure()
+    void structural()
     {
         // well formed btree
         assertEquals(nodes[0].getLeftChild(), nodes[1]);
         assertEquals(nodes[0].getRightChild(), nodes[2]);
+        assertEquals(nodes[1].getLeftChild(), nodes[3]);
+        assertEquals(nodes[1].getRightChild(), nodes[4]);
+        assertEquals(nodes[2].getLeftChild(), nodes[5]);
+        assertEquals(nodes[2].getRightChild(), nodes[6]);
+        assertEquals(nodes[3].getLeftChild(), nodes[7]);
+        assertEquals(nodes[3].getRightChild(), nodes[8]);
+        assertEquals(nodes[4].getLeftChild(), nodes[9]);
+        assertEquals(nodes[4].getRightChild(), nodes[10]);
+        assertEquals(nodes[5].getLeftChild(), nodes[11]);
+        assertEquals(nodes[5].getRightChild(), nodes[12]);
+        assertEquals(nodes[6].getLeftChild(), nodes[13]);
+        assertEquals(nodes[6].getRightChild(), nodes[14]);
 
         // no recursion possible
         btree.putNode(nodes[3], nodes[0], true);
