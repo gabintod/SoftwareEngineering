@@ -13,9 +13,20 @@ public class DAGNode<T>
         children = new ArrayList<>();
     }
 
-    // @TODO
     DAGNode<T> find(T v)
     {
+        if (value.equals(v))
+            return this;
+
+        DAGNode<T> node;
+
+        for (DAGNode<T> child : children)
+        {
+            node = child.find(v);
+            if (node != null)
+                return node;
+        }
+
         return null;
     }
 
@@ -35,10 +46,13 @@ public class DAGNode<T>
         return children;
     }
 
-    // @TODO
     public DAGNode<T> putChild(DAGNode<T> child)
     {
-        return null;
+        if (find(child.getValue()) != null)
+            return null;
+
+        children.add(child);
+        return child;
     }
 
     @Override

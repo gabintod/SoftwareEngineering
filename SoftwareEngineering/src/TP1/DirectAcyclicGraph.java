@@ -7,9 +7,11 @@ public class DirectAcyclicGraph<T> extends DAGNode
         super(value);
     }
 
-    // @TODO
     public DAGNode<T> putChild(DAGNode<T> parent, DAGNode<T> child)
     {
-        return null;
+        if (find(parent.getValue()) == null)
+            return null;
+
+        return parent.putChild(child);
     }
 }
