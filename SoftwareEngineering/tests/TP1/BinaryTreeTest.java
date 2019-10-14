@@ -32,7 +32,7 @@ public class BinaryTreeTest
     }
 
     @Test
-    void basics()
+    void structure()
     {
         // well formed btree
         assertEquals(nodes[0].getLeftChild(), nodes[1]);
@@ -44,6 +44,10 @@ public class BinaryTreeTest
 
         // no add of pre-existing value
         btree.putNode(nodes[3], nodes[10], true);
+        assertEquals(nodes[3].getRightChild(), nodes[8]);
+
+        // can not add itself as child
+        btree.putNode(nodes[3], nodes[3], true);
         assertEquals(nodes[3].getRightChild(), nodes[8]);
     }
 
