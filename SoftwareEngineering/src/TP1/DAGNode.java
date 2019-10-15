@@ -48,7 +48,7 @@ public class DAGNode<T>
 
     public DAGNode<T> putChild(DAGNode<T> child)
     {
-        if (find(child.getValue()) != null)
+        if (child.find(getValue()) != null)
             return null;
 
         children.add(child);
