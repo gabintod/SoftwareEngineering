@@ -14,4 +14,9 @@ public class DirectAcyclicGraph<T> extends DAGNode
 
         return parent.putChild(child);
     }
+
+    public void print()
+    {
+        print("", "");
+    }
 }

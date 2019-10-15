@@ -34,6 +34,8 @@ public class DirectAcyclicGraphTest
         wellInstanced = wellInstanced && (dag.putChild(nodes[9], nodes[12]) != null);
         wellInstanced = wellInstanced && (dag.putChild(nodes[9], nodes[10]) != null);
         wellInstanced = wellInstanced && (dag.putChild(nodes[10], nodes[11]) != null);
+
+        dag.print();
     }
 
     @Test
@@ -82,7 +84,9 @@ public class DirectAcyclicGraphTest
         assertNotEquals(dag.putChild(nodes[4], nodes[3]), null);
         assertNotEquals(dag.putChild(nodes[5], nodes[6]), null);
 
+        dag.print();
         // tests with junction
+        assertEquals(dag.LCA(nodes[12], nodes[7]), nodes[4]);
         assertEquals(dag.LCA(dag.LCA(nodes[12], nodes[7]), nodes[5]), nodes[4]);
         assertEquals(dag.LCA(nodes[5], nodes[6]), nodes[5]);
     }
