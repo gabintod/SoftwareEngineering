@@ -72,5 +72,18 @@ public class DirectAcyclicGraphTest
     @Test
     void LCA()
     {
+        // tests without junction
+        assertEquals(dag.LCA(nodes[7], nodes[8]), nodes[4]);
+        assertEquals(dag.LCA(nodes[8], nodes[11]), nodes[9]);
+        assertEquals(dag.LCA(dag.LCA(nodes[7], nodes[8]), nodes[11]), nodes[4]);
+        assertEquals(dag.LCA(dag.LCA(nodes[12], nodes[7]), nodes[5]), nodes[0]);
+
+        // junction
+        assertNotEquals(dag.putChild(nodes[4], nodes[3]), null);
+        assertNotEquals(dag.putChild(nodes[5], nodes[6]), null);
+
+        // tests with junction
+        assertEquals(dag.LCA(dag.LCA(nodes[12], nodes[7]), nodes[5]), nodes[4]);
+        assertEquals(dag.LCA(nodes[5], nodes[6]), nodes[5]);
     }
 }
