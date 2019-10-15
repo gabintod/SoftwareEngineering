@@ -61,6 +61,12 @@ public class DirectAcyclicGraphTest
         assertFalse(nodes[4].getChildren().contains(nodes[0]));
         assertNull(dag.putChild(nodes[11], nodes[6]));
         assertFalse(nodes[11].getChildren().contains(nodes[6]));
+
+        // junction possible if no recursion
+        assertNotEquals(dag.putChild(nodes[4], nodes[3]), null);
+        assertTrue(nodes[4].getChildren().contains(nodes[3]));
+        assertNotEquals(dag.putChild(nodes[7], nodes[10]), null);
+        assertTrue(nodes[7].getChildren().contains(nodes[10]));
     }
 
     @Test
