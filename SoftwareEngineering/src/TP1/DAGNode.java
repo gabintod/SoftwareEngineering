@@ -33,28 +33,26 @@ public class DAGNode<T>
         return null;
     }
 
-    DAGNode<T> LCA(DAGNode<T> n1, DAGNode<T> n2)
+    ArrayList<DAGNode<T>> LCA(DAGNode<T> n1, DAGNode<T> n2)
     {
-        LCAPack pack;
-        if ((pack = subLCA(n1, n2)) != null)
-            return pack.expeditor;
+        ArrayList<LCAPack> packs;
+        // TODO
         return null;
     }
 
-    LCAPack subLCA(DAGNode<T> n1, DAGNode<T> n2)
+    ArrayList<LCAPack> subLCA(DAGNode<T> n1, DAGNode<T> n2)
     {
         if ((n1 == null) || (n2 == null))
             return null;
 
-        ArrayList<LCAPack> packs = new ArrayList<>();
+        ArrayList<LCAPack> savedPacks = new ArrayList<>();
 
         if (this.equals(n1))
-            packs.add(new LCAPack(this, true, false));
+            savedPacks.add(new LCAPack(this, true, false));
         else if (this.equals(n2))
-            packs.add(new LCAPack(this, false, true));
+            savedPacks.add(new LCAPack(this, false, true));
 
-        LCAPack pack;
-
+        ArrayList<LCAPack> packs;
         // TODO get across children & complete/add packs
 
         // TODO find best completed pack(s) (lowest dist) & increment its/their dist & return it/them

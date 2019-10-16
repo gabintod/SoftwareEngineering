@@ -75,10 +75,10 @@ public class DirectAcyclicGraphTest
     void LCA()
     {
         // tests without junction
-        assertEquals(dag.LCA(nodes[7], nodes[8]), nodes[4]);
-        assertEquals(dag.LCA(nodes[8], nodes[11]), nodes[9]);
-        assertEquals(dag.LCA(dag.LCA(nodes[7], nodes[8]), nodes[11]), nodes[4]);
-        assertEquals(dag.LCA(dag.LCA(nodes[12], nodes[7]), nodes[5]), nodes[0]);
+        assertTrue(dag.LCA(nodes[7], nodes[8]).equals(nodes[4]));
+        assertTrue(dag.LCA(nodes[8], nodes[11]).equals(nodes[9]));
+        assertTrue(dag.LCA((DAGNode) dag.LCA(nodes[7], nodes[8]).get(0), nodes[11]).equals(nodes[4]));
+        assertTrue(dag.LCA((DAGNode)dag.LCA(nodes[12], nodes[7]).get(0), nodes[5]).equals(nodes[0]));
 
         // junction
         assertNotEquals(dag.putChild(nodes[4], nodes[3]), null);
@@ -86,8 +86,8 @@ public class DirectAcyclicGraphTest
 
         dag.print();
         // tests with junction
-        assertEquals(dag.LCA(nodes[12], nodes[7]), nodes[4]);
-        assertEquals(dag.LCA(dag.LCA(nodes[12], nodes[7]), nodes[5]), nodes[4]);
-        assertEquals(dag.LCA(nodes[5], nodes[6]), nodes[5]);
+        assertTrue(dag.LCA(nodes[12], nodes[7]).equals(nodes[4]));
+        assertTrue(dag.LCA((DAGNode) dag.LCA(nodes[12], nodes[7]).get(0), nodes[5]).equals(nodes[4]));
+        assertTrue(dag.LCA(nodes[5], nodes[6]).equals(nodes[5]));
     }
 }
