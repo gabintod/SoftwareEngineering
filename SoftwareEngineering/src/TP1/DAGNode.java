@@ -36,7 +36,16 @@ public class DAGNode<T>
     ArrayList<DAGNode<T>> LCA(DAGNode<T> n1, DAGNode<T> n2)
     {
         ArrayList<LCAPack> packs;
-        // TODO
+        ArrayList<DAGNode<T>> nodes = null;
+        if ((packs = subLCA(n1, n2)) != null)
+        {
+            nodes = new ArrayList<>();
+            for (LCAPack p : packs)
+                if (p.isComplete())
+                    nodes.add(p.expeditor);
+        }
+        if (nodes.size() > 0)
+            return nodes;
         return null;
     }
 
@@ -53,11 +62,64 @@ public class DAGNode<T>
             savedPacks.add(new LCAPack(this, false, true));
 
         ArrayList<LCAPack> packs;
-        // TODO get across children & complete/add packs
+        for (DAGNode<T> child : children)
+        {
+            if ((packs = child.subLCA(n1, n2)) != null)
+            {
+                for (LCAPack p : packs)
+                {
+                    if (p.isComplete())
+                        savedPacks.add(p);
+                    else
+                    {
+                        if (savedPacks.size() > 0)
+                        {
+                            for (LCAPack pack : savedPacks)
+                            {
+                                if ((!pack.isComplete()) && (p.canComplete(pack)))
+                                {
+                                    p.complete(pack, this);
+                                    savedPacks.add(p);
+                                    break;
+                                }
+                            }
+                        }
+                        else
+                            savedPacks.add(p);
+                    }
+                }
+            }
+        }
 
-        // TODO find best completed pack(s) (lowest dist) & increment its/their dist & return it/them
+        for (LCAPack pack : savedPacks)
+        {
+            if (pack.isComplete())
+            {
+                int maxDist = pack.dist;
+                // remove non completed packs, define max dist, increment dist
+                for (int i=savedPacks.size()-1; i>=0; i--)
+                {
+                    if (!savedPacks.get(i).isComplete())
+                        savedPacks.remove(i);
+                    else
+                    {
+                        savedPacks.get(i).dist ++;
+                        if (savedPacks.get(i).dist > maxDist)
+                            maxDist = savedPacks.get(i).dist;
+                    }
+                }
+                //  delete non max dist packs
+                for (int i=savedPacks.size()-1; i>=0; i--)
+                {
+                    if (savedPacks.get(i).dist != maxDist)
+                        savedPacks.remove(i);
+                }
+                return savedPacks;
+            }
+        }
 
-        // TODO if no completed pack, return any pack
+        if (savedPacks.size() > 0)
+            return savedPacks;
 
         return null;
     }
