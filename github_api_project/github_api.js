@@ -3,7 +3,12 @@ const express = require('express');
 const app = express();
 const Octokit = require("@octokit/rest");
 var octokit = null;
+var authuser = null;
 
+
+
+
+// API functions    ----------------------------------------------------------------------------------------------------
 const getRepoList = async () => {
     return await octokit.repos.list();
 };
@@ -19,6 +24,23 @@ const getAuthUserInfos = async () => {
     return await octokit.users.getAuthenticated();
 };
 
+const getContribStats = async (owner, repo) => {
+    return await octokit.repos.getContributorsStats({
+        owner: owner,
+        repo: repo
+    });
+};
+
+const getCollabList = async (owner, repo) => {
+    return await octokit.repos.listCollaborators({
+        owner: owner,
+        repo: repo
+    });
+};
+
+
+
+//  Requests    --------------------------------------------------------------------------------------------------------
 app.use(express.static(`${__dirname}/public`));
 app.use(express.json());
 app.get('/allrepos', async (req, res) => {
@@ -62,7 +84,6 @@ app.get('/repofromuser', async (req, res) => {
 });
 
 
-
 //  authentify
 app.post('/connect', async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', 'null');
@@ -80,6 +101,7 @@ app.post('/connect', async (req, res) => {
             userAgent: "github_api",
             log: console
         });
+        authuser = username;
         await getAuthUserInfos();
     }
     catch (e)
@@ -97,6 +119,7 @@ app.post('/disconnect', async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', 'null');
 
     octokit = null;
+    authuser = null;
 
     res.send();
 });
@@ -125,6 +148,56 @@ app.get('/testAuth', async (req, res) => {
     res.send({connected: true});
 });
 
+
+//  get data for graph
+app.get('/graphdata', async (req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', 'null');
+
+    const repoList = await getRepoList();
+    let contribStats;
+    let repos = [];
+    let users = [];
+    let links = [];
+
+    for (let i in repoList.data)
+    {
+        repos.push({
+            name: repoList.data[i].name,
+            size: repoList.data[i].size,
+            private: repoList.data[i].private
+        });
+        let repoOwner = repoList.data[i].owner.login;
+        contribStats = await getContribStats(repoOwner, repoList.data[i].name);
+        for (let j in contribStats.data)
+        {
+            let user = contribStats.data[j].author.login;
+            if ((authuser !== user) && (!users.includes(user)))
+            {
+                users.push(user);
+            }
+            links.push({from: user,
+                to: repoList.data[i].name,
+                weight: contribStats.data[j].total,
+                owner: (user === repoOwner)
+            });
+        }
+    }
+
+    console.log({
+        authuser: authuser,
+        users: users,
+        repos: repos,
+        links: links
+    });
+
+    res.send({
+        authuser: authuser,
+        users: users,
+        repos: repos,
+        links: links
+    });
+});
+
 // octokit.repos.listCollaborators({
 //   owner,
 //   repo
@@ -139,5 +212,7 @@ app.get('/testAuth', async (req, res) => {
 //   owner,
 //   repo
 // })
+
+
 
 app.listen(3000);

@@ -27,7 +27,7 @@ class Circle
     }
 }
 
-class Link
+class Line
 {
     constructor(fx, fy, tx, ty, stroke, stkw)
     {
@@ -40,6 +40,47 @@ class Link
 
         this.stroke = stroke;   // stroke color
         this.stkw = stkw;       // stroke weight
+    }
+}
+
+class User
+{
+    constructor(x, y, name, main)
+    {
+        this.x = x;
+        this.y = y;
+        this.name = name;
+        this.circle = new Circle(x, y, 10, (main) ? 2 : 0);
+        this.text = new Text(x + 12, y + 5, 10, 'black', name)
+    }
+}
+
+class Repository
+{
+    constructor(x, y, properties)
+    {
+        this.x = x;
+        this.y = y;
+        this.name = properties.name;
+        this.size = properties.size;
+        this.dislaysize = 5 + (this.size + '').length * 5;
+        this.private = properties.private;
+        this.circle = new Circle(x, y, this.dislaysize, (this.private) ? 2 : 0);
+        this.text = new Text(x - this.dislaysize, y + this.dislaysize + 15, 15, 'black', this.name);
+    }
+}
+
+class Link
+{
+    constructor(from, to, weight, owner)
+    {
+        this.fx = from.x;
+        this.fy = from.y;
+        this.tx = to.x;
+        this.ty = to.y;
+        this.weight = weight;
+        this.displayweight = Math.min((weight + '').length, 1);
+        this.line = new Line(this.fx, this.fy, this.tx, this.ty, (this.weight > 0) ? ((owner) ? 'red' : 'black') : 'grey', this.displayweight);
     }
 }
 
@@ -65,21 +106,70 @@ function disconnectListener(data)
 
 function getDataListener(data)
 {
-    const res = JSON.parse(data);
+    const res = JSON.parse(this.responseText);
 
-    //  parse data
+    let users = [];
+    let repos = [];
+    let links = [];
 
-    let texts = [
-        new Text(120, 110, 20, 'black', 'Test')
-    ];
-    let circles = [
-        new Circle(100, 100, 20, 1)
-    ];
-    let links = [
-        new Link(0, 0, 1000, 1000, 'hsl(100, 100%, 50%)', 5)
-    ];
+    //  parse auth user
+    users.push(new User(550, 730, res.authuser, true));
 
-    drawGraph(texts, circles, links);
+    //  parse other users
+    for (let i in res.users)
+    {
+        users.push(new User((1100 * (parseInt(i) + 1)) / (res.users.length + 1), 20 + parseInt(i)%2 * 30, res.users[i], false));
+    }
+
+    //  parse repositories
+    for (let i in res.repos)
+    {
+        repos.push(new Repository((1100 * (parseInt(i) + 1)) / (res.repos.length + 1), 300 + parseInt(i)%2 * 150, res.repos[i]));
+    }
+
+    //  parse links
+    for (let i in res.links)
+    {
+        for (let j in users)
+        {
+            if (users[j].name === res.links[i].from)
+            {
+                for (let k in repos)
+                {
+                    if (repos[k].name === res.links[i].to)
+                    {
+                        links.push(new Link(users[j], repos[k], res.links[i].weight, res.links[i].owner));
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+    }
+
+    let texts = [];
+    let circles = [];
+    let lines = [];
+
+    for (let i in users)
+    {
+        circles.push(users[i].circle);
+        texts.push(users[i].text);
+    }
+
+    for (let i in repos)
+    {
+        circles.push(repos[i].circle);
+        texts.push(repos[i].text);
+    }
+
+    for (let i in links)
+    {
+        lines.push(links[i].line);
+    }
+
+
+    drawGraph(texts, circles, lines);
 }
 
 function drawGraph(txts, crls, lks)
@@ -101,7 +191,8 @@ function drawGraph(txts, crls, lks)
         .attr('cy', (d) => d.y)
         .attr('r', (d) => d.r)
         .attr('fill', (d, i) => ('hsl(' + (360.0 / crls.length * i) + ', 100%, 50%)'))
-        .attr('stroke-weight', (d) => d.stkw);
+        .attr('stroke', 'black')
+        .attr('stroke-width', (d) => d.stkw);
 
     // texts
     d3.select('#graph').selectAll('text').data([]).exit().remove();
@@ -133,66 +224,66 @@ function disconnect()
 
 function getData()
 {
-    /*const oReq = new XMLHttpRequest();
+    const oReq = new XMLHttpRequest();
     oReq.addEventListener("load", getDataListener);
     oReq.open("GET", "http://localhost:3000/graphdata");
-    oReq.send();*/
+    oReq.send();
 
-    getDataListener(JSON.stringify({
-        authuser: 'gabintod',
-        users: [
-            'FrancoisRigaut',
-            'YannisFalco',
-            'montoyadamien'
-        ],
-        repos: [
-            {
-                name: 'Ps6-final',
-                size: 3150,
-                private: false
-            },
-            {
-                name: 'Goodenof',
-                size: 960,
-                private: true
-            },
-            {
-                name: 'pico-8',
-                size: 150,
-                private: false
-            }
-        ],
-        links: [
-            {
-                from: 'FrancoisRigaut',
-                to: 'Goodenof',
-                size: 125,
-                owner: false
-            },
-            {
-                from: 'montoyadamien',
-                to: 'Goodenof',
-                size: 960,
-                owner: true
-            },
-            {
-                from: 'gabintod',
-                to: 'pico-8',
-                size: 150,
-                owner: true
-            },
-            {
-                from: 'FrancoisRigaut',
-                to: 'pico-8',
-                size: 0,
-                owner: false
-            },
-            {
-                from: 'montoyadamien',
-                to: 'pico-8',
-                size: 0,
-                owner: false
-            }
-        ]
-    }));
+    // getDataListener(JSON.stringify({
+    //     authuser: 'gabintod',
+    //     users: [
+    //         'FrancoisRigaut',
+    //         'YannisFalco',
+    //         'montoyadamien'
+    //     ],
+    //     repos: [
+    //         {
+    //             name: 'Ps6-final',
+    //             size: 3150,
+    //             private: false
+    //         },
+    //         {
+    //             name: 'Goodenof',
+    //             size: 960,
+    //             private: true
+    //         },
+    //         {
+    //             name: 'pico-8',
+    //             size: 150,
+    //             private: false
+    //         }
+    //     ],
+    //     links: [
+    //         {
+    //             from: 'FrancoisRigaut',
+    //             to: 'Goodenof',
+    //             weight: 125,
+    //             owner: false
+    //         },
+    //         {
+    //             from: 'montoyadamien',
+    //             to: 'Goodenof',
+    //             weight: 960,
+    //             owner: true
+    //         },
+    //         {
+    //             from: 'gabintod',
+    //             to: 'pico-8',
+    //             weight: 150,
+    //             owner: true
+    //         },
+    //         {
+    //             from: 'FrancoisRigaut',
+    //             to: 'pico-8',
+    //             weight: 0,
+    //             owner: false
+    //         },
+    //         {
+    //             from: 'montoyadamien',
+    //             to: 'pico-8',
+    //             weight: 0,
+    //             owner: false
+    //         }
+    //     ]
+    // }));
 }
