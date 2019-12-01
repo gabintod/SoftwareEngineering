@@ -81,7 +81,7 @@ class Link
         this.ty = to.y;
         this.weight = weight;
         this.displayweight = Math.max((2*this.weight + '').length, 1);
-        this.line = new Line(this.fx, this.fy, this.tx, this.ty, (this.weight > 0) ? ((owner) ? 'red' : 'black') : 'grey', this.displayweight);
+        this.line = new Line(this.fx, this.fy, this.tx, this.ty, (this.displayweight > 0) ? ((owner) ? 'red' : 'black') : 'grey', this.displayweight);
     }
 }
 

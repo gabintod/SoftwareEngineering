@@ -216,11 +216,6 @@ app.get('/graphdata', async (req, res) => {
 //   repo
 // })
 
-// octokit.repos.getContributorsStats({
-//   owner,
-//   repo
-// })
-
 
 
 app.listen(3000);
