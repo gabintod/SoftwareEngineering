@@ -175,12 +175,20 @@ app.get('/graphdata', async (req, res) => {
             {
                 users.push(user);
             }
-            links.push({from: user,
+            links.push({
+                from: user,
                 to: repoList.data[i].name,
                 weight: contribStats.data[j].total,
                 owner: (user === repoOwner)
             });
         }
+        if (contribStats.data.length <= 0)
+            links.push({
+                from: repoOwner,
+                to: repoList.data[i].name,
+                weight: 1,
+                owner: true
+            });
     }
 
     console.log({

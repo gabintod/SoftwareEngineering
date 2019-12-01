@@ -1,4 +1,5 @@
 'use strict';
+const refresh = document.getElementById('refresh');
 
 class Text
 {
@@ -63,7 +64,7 @@ class Repository
         this.y = y;
         this.name = properties.name;
         this.size = properties.size;
-        this.dislaysize = 5 + (this.size + '').length * 5;
+        this.dislaysize = 5 + (2*this.size + '').length * 5;
         this.private = properties.private;
         this.circle = new Circle(x, y, this.dislaysize, (this.private) ? 2 : 0);
         this.text = new Text(x - this.dislaysize, y + this.dislaysize + 15, 15, 'black', this.name);
@@ -79,7 +80,7 @@ class Link
         this.tx = to.x;
         this.ty = to.y;
         this.weight = weight;
-        this.displayweight = Math.min((weight + '').length, 1);
+        this.displayweight = Math.max((2*this.weight + '').length, 1);
         this.line = new Line(this.fx, this.fy, this.tx, this.ty, (this.weight > 0) ? ((owner) ? 'red' : 'black') : 'grey', this.displayweight);
     }
 }
@@ -139,10 +140,8 @@ function getDataListener(data)
                     if (repos[k].name === res.links[i].to)
                     {
                         links.push(new Link(users[j], repos[k], res.links[i].weight, res.links[i].owner));
-                        break;
                     }
                 }
-                break;
             }
         }
     }
@@ -167,6 +166,10 @@ function getDataListener(data)
     {
         lines.push(links[i].line);
     }
+
+
+    refresh.innerHTML = '<i class="fas fa-sync-alt"></i>';
+    refresh.disabled = false;
 
 
     drawGraph(texts, circles, lines);
@@ -224,6 +227,9 @@ function disconnect()
 
 function getData()
 {
+    refresh.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+    refresh.disabled = true;
+
     const oReq = new XMLHttpRequest();
     oReq.addEventListener("load", getDataListener);
     oReq.open("GET", "http://localhost:3000/graphdata");

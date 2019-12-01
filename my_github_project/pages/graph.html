@@ -15,11 +15,12 @@
     </div>
     <div class="bg-light p-2 px-4">
         <button type="button" class="btn btn-danger" onclick="disconnect()">Disconnect</button>
-        <button type="button" class="btn btn-outline-primary" onclick="getData()"><i class="fas fa-sync-alt"></i></button>
+        <button id="refresh" type="button" class="btn btn-outline-primary" onclick="getData()">
+            <i class="fas fa-sync-alt"></i>
+        </button>
         <hr />
         <div class="text-center">
             <svg id="graph" width="1100" height="750">
-                <text x="500" y="350" fill="black">Loading...</text>
             </svg>
         </div>
     </div>
