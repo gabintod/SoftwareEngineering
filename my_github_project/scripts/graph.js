@@ -1,10 +1,18 @@
 'use strict';
 const refresh = document.getElementById('refresh');
+var users;
+var repos;
+var links;
+var texts;
+var circles;
+var lines;
 
 class Text
 {
-    constructor(x, y, ts, color, text)
+    constructor(name, clss, x, y, ts, color, text)
     {
+        this.name = name;
+        this.clss = clss;       // class for selection
         // coordinates
         this.x = x;
         this.y = y;
@@ -17,8 +25,10 @@ class Text
 
 class Circle
 {
-    constructor(x, y, r, stkw)
+    constructor(name, clss, x, y, r, stkw)
     {
+        this.name = name;
+        this.clss = clss;       // class for selection
         // coordinates
         this.x = x;
         this.y = y;
@@ -30,8 +40,11 @@ class Circle
 
 class Line
 {
-    constructor(fx, fy, tx, ty, stroke, stkw)
+    constructor(from, to, clss, fx, fy, tx, ty, stroke, stkw)
     {
+        this.from = from;       // from name
+        this.to = to;           // to name
+        this.clss = clss;       // class for selection
         // from coordinates
         this.fx = fx;
         this.fy = fy;
@@ -51,8 +64,8 @@ class User
         this.x = x;
         this.y = y;
         this.name = name;
-        this.circle = new Circle(x, y, 10, (main) ? 2 : 0);
-        this.text = new Text(x + 12, y + 5, 10, 'black', name)
+        this.circle = new Circle(this.name, 'user_circle', x, y, 10, (main) ? 2 : 0);
+        this.text = new Text(this.name, 'user_text', x + 12, y + 5, 10, 'black', name);
     }
 }
 
@@ -66,8 +79,8 @@ class Repository
         this.size = properties.size;
         this.dislaysize = 5 + (2*this.size + '').length * 5;
         this.private = properties.private;
-        this.circle = new Circle(x, y, this.dislaysize, (this.private) ? 2 : 0);
-        this.text = new Text(x - this.dislaysize, y + this.dislaysize + 15, 15, 'black', this.name);
+        this.circle = new Circle(this.name, 'repo_circle', x, y, this.dislaysize, (this.private) ? 2 : 0);
+        this.text = new Text(this.name, 'repo_text', x - this.dislaysize, y + this.dislaysize + 15, 15, 'black', this.name);
     }
 }
 
@@ -81,7 +94,7 @@ class Link
         this.ty = to.y;
         this.weight = weight;
         this.displayweight = Math.max((2*this.weight + '').length, 1);
-        this.line = new Line(this.fx, this.fy, this.tx, this.ty, (this.displayweight > 0) ? ((owner) ? 'red' : 'black') : 'grey', this.displayweight);
+        this.line = new Line(from.name, to.name, 'link', this.fx, this.fy, this.tx, this.ty, (this.displayweight > 0) ? ((owner) ? 'red' : 'black') : 'grey', this.displayweight);
     }
 }
 
@@ -109,9 +122,9 @@ function getDataListener(data)
 {
     const res = JSON.parse(this.responseText);
 
-    let users = [];
-    let repos = [];
-    let links = [];
+    users = [];
+    repos = [];
+    links = [];
 
     //  parse auth user
     users.push(new User(550, 730, res.authuser, true));
@@ -146,9 +159,9 @@ function getDataListener(data)
         }
     }
 
-    let texts = [];
-    let circles = [];
-    let lines = [];
+    texts = [];
+    circles = [];
+    lines = [];
 
     for (let i in users)
     {
@@ -184,8 +197,9 @@ function drawGraph(txts, crls, lks)
         .attr('y1', (d) => d.fy)
         .attr('x2', (d) => d.tx)
         .attr('y2', (d) => d.ty)
-        .attr('stroke', (d) => d.stroke)
-        .attr('stroke-width', (d) => d.stkw);
+        .attr('stroke', 'transparent')
+        .attr('stroke-width', (d) => d.stkw)
+        .attr('class', (d) => d.clss);
 
     // circles
     d3.select('#graph').selectAll('circle').data([]).exit().remove();
@@ -195,7 +209,32 @@ function drawGraph(txts, crls, lks)
         .attr('r', (d) => d.r)
         .attr('fill', (d, i) => ('hsl(' + (360.0 / crls.length * i) + ', 100%, 50%)'))
         .attr('stroke', 'black')
-        .attr('stroke-width', (d) => d.stkw);
+        .attr('stroke-width', (d) => d.stkw)
+        .attr('class', (d) => d.clss)
+        .on('mouseover', function (d, i) {
+            if (d.clss.indexOf('repo') >= 0)
+            {
+                d3.selectAll('.link').attr('stroke', function (l) {
+                    if (l.to === d.name) {
+                        return l.stroke;
+                    }
+                    return 'transparent';
+                });
+                d3.selectAll('.repo_text').attr('fill', function (t) {
+                    if (t.name === d.name) {
+                        return t.color;
+                    }
+                    return 'transparent';
+                });
+            }
+        })
+        .on('mouseout', function (d, i) {
+        if (d.clss.indexOf('repo') >= 0)
+        {
+            d3.selectAll('.link').attr('stroke', 'transparent');
+            d3.selectAll('.repo_text').attr('fill', 'transparent');
+        }
+    });
 
     // texts
     d3.select('#graph').selectAll('text').data([]).exit().remove();
@@ -203,7 +242,13 @@ function drawGraph(txts, crls, lks)
         .attr('x', (d) => d.x)
         .attr('y', (d) => d.y)
         .attr('font-size', (d) => d.ts)
-        .attr('fill', (d) => d.color)
+        .attr('class', (d) => d.clss)
+        .attr('fill', function (d) {
+            if (d.clss.indexOf('repo') >= 0)
+                return 'transparent';
+            else
+                return d.color;
+        })
         .text((d) => d.text);
 }
 
