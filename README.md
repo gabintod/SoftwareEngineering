@@ -1,5 +1,5 @@
 # Software Engineering
-## Lowerst Common Ancestor
+### Lowerst Common Ancestor
 The *Software Engineering* folder contains the **Java** project implementing an LCA finder program.
 
 ### Biography
