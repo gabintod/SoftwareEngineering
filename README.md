@@ -2,13 +2,13 @@
 ## Lowerst Common Ancestor
 The *Software Engineering* folder contains the **Java** project implementing an LCA finder program.
 
-## Biography
+### Biography
 The *Biography Docx* is a biography of the C++ creator Bjarne Stroustrup
 
-## Measuring Engineering Report
+### Measuring Engineering Report
 The second *.docx* is the repport of how the software engineering process can be measured
 
-## GitHub API graph project
+### GitHub API graph project
 The GitHub API graph project is splitted in two parts, the **Client** part is in the *my_github_project* folder and the
 **Server** in the *github_api_project* folder using Node.js.
 I am using *XMLHttpRequests* to link the front and back-end together, using IntelliJ Ultimate I start the server with
